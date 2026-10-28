@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FONBET</title>
+    <link rel="icon" href="./game_icon.png?v=1" type="image/png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hack-font@3/build/web/hack.css" />
+    <style>
+      :root { color-scheme: dark; font-family: "Hack", monospace; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; background: #050814; width: 100%; height: 100%; }
+      body { overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      .pygodide-shell, .pygodide-stage { width: 360px; height: 640px; position: relative; }
+      
+      #pygodide-loader { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; background-color: #050814; transition: opacity 300ms ease-out; }
+      #pygodide-loader[data-state="hidden"] { opacity: 0; visibility: hidden; }
+      #pygodide-brand, #status, #pygodide-progress, #pygodide-progress-fill { opacity: 0 !important; pointer-events: none !important; }
+      
+      #canvas { display: block; background: #050814; width: 360px; height: 640px; image-rendering: pixelated; }
+
+      /* Поле ввода: скрыто по умолчанию */
+      #nickname-overlay {
+        position: absolute;
+        top: 280px;
+        left: 50px;
+        width: 260px;
+        height: 50px;
+        display: none; /* СКРЫТО ПО УМОЛЧАНИЮ */
+        z-index: 100;
+      }
+
+      #js-nickname-input {
+        width: 100%;
+        height: 100%;
+        font-size: 24px;
+        text-align: center;
+        background: transparent;
+        border: none;
+        color: transparent;
+        caret-color: transparent;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="pygodide-shell">
+      <div class="pygodide-stage">
+        <div id="pygodide-loader" data-state="active">
+          <a id="pygodide-brand" href="#"><img src="./pygodide-logo.svg" alt="logo" /></a>
+          <div id="status">Loading...</div>
+          <div id="pygodide-progress" class="pygodide-progress"><span id="pygodide-progress-fill" class="pygodide-progress-fill"></span></div>
+        </div>
+        <canvas id="canvas" width="360" height="640" tabindex="0"></canvas>
+        
+        <div id="nickname-overlay">
+          <input type="text" id="js-nickname-input" maxlength="15" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.0/full/pyodide.js"></script>
+    <script type="module" src="./boot.js?v=a6318f5a52fb"></script>
+
+    <script>
+      window.js_nickname = "";
+      window.js_confirm_nickname = false;
+
+      document.getElementById('js-nickname-input').addEventListener('input', (e) => {
+        window.js_nickname = e.target.value;
+      });
+
+      document.getElementById('js-nickname-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.value.length >= 2) {
+          window.js_nickname = e.target.value;
+          window.js_confirm_nickname = true;
+          e.target.blur();
+        }
+      });
+
+      // Функции, которые вызывает Питон
+      window.showNicknameOverlay = function() {
+        document.getElementById('nickname-overlay').style.display = 'block';
+      };
+      window.hideNicknameOverlay = function() {
+        document.getElementById('nickname-overlay').style.display = 'none';
+      };
+    </script>
+  </body>
+</html>
